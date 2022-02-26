@@ -1,29 +1,50 @@
 from multiprocessing import context
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
+from django.contrib import messages
 from django.db.models import Q
 from .models import Tag, Conversation, Goal
-
+from django.contrib.auth import authenticate, login
+from .forms import newUserCreationForm
+from django.contrib.auth.models import User
 # TODO move users to seperate app
 
 
 def userLogin(request):
-    toDisplay =  'login'
+    toDisplay = 'login'
     if request.user.is_authenticated:
         return redirect('home')
     if request.method == 'POST':
-        email =  request.POST.get('email').lower()
-        password =  request.POST.get('password')
-
         try:
-            print("testing auth")
+            # TODO find work around for email Abstract user did not work
+            username = request.POST.get('username').lower()
+            password = request.POST.get('password')
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('home')
         except:
-            print("failed")
-    return 'login'
+            messages.error(request, '😕 .something went wrong')
+    context = {'todisplay': toDisplay}
+    return render(request, 'communities/auth.html', context)
 
 
 def userRegister(request):
-    pass
+    form = newUserCreationForm()
+    if request.method == 'POST':
+        try:
+            isValid = newUserCreationForm(request.POST).is_valid()
+            if isValid == True:
+                user = User.objects.create_user(request.POST)
+                user.username = user.username.lower()
+                user.save()
+                login(request, user)
+                return redirect('home')
+        except:
+            messages.error(
+                request, '😕 .something went wrong with registration .')
+    context = {'form': form}
+    return render(request, 'communities/auth.html',context)
 
 
 def userLogout(request):

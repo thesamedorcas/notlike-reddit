@@ -85,7 +85,7 @@ DATABASES = {
 }
 
 #TODO change when you create user app
-AUTH_USER_MODEL = 'communities.User' #had errors with this
+#AUTH_USER_MODEL = 'communities.User' #had errors with this
 # 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators

@@ -1,18 +1,19 @@
 from django.db import models
 from sqlalchemy import true
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import User
 
 # Create your models here.
 
 
-class User(AbstractUser):
-    name = models.CharField(max_length=50, null=True)
-    email = models.EmailField(unique=True, null=True)
+class userProfile(models.Model):
+    user = models.ForeignKey(to=User, on_delete=models.CASCADE)
     bio = models.TextField(null=true)
+    created = models.DateTimeField(auto_now_add=true)
 
     # avatar =
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+
+    def __str__(self):
+        return str(self.user)
 
 
 class Tag(models.Model):
@@ -25,7 +26,10 @@ class Tag(models.Model):
 
 
 class Goal(models.Model):
-    # created_by user
+    created_by = models.ForeignKey(
+        to=User, on_delete=models.SET_NULL, null=True)
+    members = models.ManyToManyField(
+        to=User, related_name='members', blank=true)
     tag = models.ForeignKey(to=Tag, on_delete=models.SET_NULL, null=True)
     name = models.CharField(max_length=30)
     description = models.TextField(max_length=200)

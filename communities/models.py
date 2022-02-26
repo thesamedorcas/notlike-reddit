@@ -1,7 +1,18 @@
 from django.db import models
 from sqlalchemy import true
+from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
+
+
+class User(AbstractUser):
+    name = models.CharField(max_length=50, null=True)
+    email = models.EmailField(unique=True, null=True)
+    bio = models.TextField(null=true)
+
+    # avatar =
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
 
 
 class Tag(models.Model):
@@ -26,7 +37,7 @@ class Goal(models.Model):
     # conversation
 
     class Meta:
-        ordering = ["-updated" , "-created"]
+        ordering = ["-updated", "-created"]
 
 
 class Conversation(models.Model):
@@ -37,7 +48,7 @@ class Conversation(models.Model):
     created = models.DateTimeField(auto_now_add=true)
 
     class Meta:
-        ordering = ["-updated" , "-created"]
+        ordering = ["-updated", "-created"]
 
     def __str__(self):
         return self.body[0:20]

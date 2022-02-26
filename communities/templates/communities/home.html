@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<h1>goals count :  {{goals_count}}</h1>
+<div>
+    {% for goal in goals %}
+    <h5>goal : {{goal}}</h5>
+    {% endfor %}
+</div>
+
+
+
+{% endblock %}

@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #TODO check if it works with config
+    # TODO check if it works with config
     'communities.apps.CommunitiesConfig'
 ]
 
@@ -84,9 +84,9 @@ DATABASES = {
     }
 }
 
-#TODO change when you create user app
-#AUTH_USER_MODEL = 'communities.User' #had errors with this
-# 
+# TODO change when you create user app
+# AUTH_USER_MODEL = 'communities.User' #had errors with this
+#
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
@@ -125,6 +125,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 

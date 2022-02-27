@@ -4,7 +4,7 @@ from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.db.models import Q
 from .models import Tag, Conversation, Goal
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from .forms import newUserCreationForm
 from django.contrib.auth.models import User
 # TODO move users to seperate app
@@ -25,7 +25,7 @@ def userLogin(request):
                 return redirect('home')
         except:
             messages.error(request, '😕 .something went wrong')
-    context = {'todisplay': toDisplay}
+    context = {'toDisplay': toDisplay}
     return render(request, 'communities/auth.html', context)
 
 
@@ -35,7 +35,7 @@ def userRegister(request):
         try:
             isValid = newUserCreationForm(request.POST).is_valid()
             if isValid == True:
-                user = User.objects.create_user(request.POST)
+                user = newUserCreationForm(request.POST).save(commit=False)
                 user.username = user.username.lower()
                 user.save()
                 login(request, user)
@@ -44,11 +44,12 @@ def userRegister(request):
             messages.error(
                 request, '😕 .something went wrong with registration .')
     context = {'form': form}
-    return render(request, 'communities/auth.html',context)
+    return render(request, 'communities/auth.html', context)
 
 
 def userLogout(request):
-    pass
+    logout(request)
+    return redirect('home')
 
 
 def userProfile(request):
@@ -60,7 +61,6 @@ def userUpdate(request):
 
 
 def home(request):
-    print("home was hit")
     # TODO give user change to query
     query = ''
     # TODO arrange tag by goals under it

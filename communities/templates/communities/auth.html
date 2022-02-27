@@ -2,7 +2,8 @@
  {% block content %} 
  {% if toDisplay == 'login' %}
 <div>
-    <h1>LOGIN PAGE</h1>
+    <h1>LOgin PAGE</h1>
+
   <form method="POST" action="">
     {% csrf_token %}
 
@@ -21,8 +22,8 @@
 
 {% else %}
 <div>
+<div>
     <h1>{{toDisplay}}</h1>
-    <h1>REGister PAGE</h1>
   <form method="POST" action="">
     {% csrf_token %} {{form.as_p}}
     <input type="submit" value="Register" />
@@ -30,4 +31,6 @@
   <p>Already signed up yet?</p>
   <a href="{% url 'login' %}">Login</a>
 </div>
-{% endif %} {% endblock %}
+</div>
+{% endif %} 
+{% endblock %}

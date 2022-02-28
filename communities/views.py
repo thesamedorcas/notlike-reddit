@@ -69,8 +69,9 @@ def Profile(request, id):
         # TODO home ||  profile with message
         return HttpResponse("failure")
 
-
 # TODO add LOGIN_URL in settings.py later
+
+
 @login_required(login_url='/auth')
 def userUpdate(request):
     user = request.user
@@ -87,7 +88,7 @@ def userUpdate(request):
         if profileForm.is_valid():
             profileForm.save()
             context['profileform'] = profileForm
-        return redirect(to='profile', id = user.username)
+        return redirect(to='profile', id=user.username)
     return render(request, 'communities/update_user.html', context)
 
 
@@ -113,25 +114,34 @@ def home(request):
 
 
 # TODO move goal to seperate app / rename tro communities
-def getGoal(request):
-    pass
+def getGoal(request, id):
+    msg = "getting goal with id " + id
+    return HttpResponse(msg)
 
 
+@login_required(login_url='/auth')
 def createGoal(request):
     pass
 
 
+@login_required(login_url='/auth')
 def updateGoal(request):
     pass
 
 
+@login_required(login_url='/auth')
 def deleteGoal(request):
     pass
 
 
 def tags(request):
-    pass
+    query = request.GET.get('query') if request.GET.get(
+        'query') != None else ''
+    tags = Tag.objects.filter(name__icontains=query)
+    context = {'tags': tags}
+    return render(request, 'communities/tags.html', context)
 
 
-def activites(request):
-    pass
+def recent(request):
+    conversations = Conversation.objects.all()[0:20]
+    return render(request, 'communities/recent.html', {'conversations':  conversations})

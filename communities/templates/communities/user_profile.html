@@ -1,0 +1,9 @@
+{% extends 'base.html' %} {% block content %}
+<h2>a single user profile page</h2>
+<h1>{{user.username}}</h1>
+<h1>{{user.email}}</h1>
+<div>
+  <img src="{{profile.avatar.url}}" style="width: 50px; height: 60px" />
+</div>
+
+{% endblock %}

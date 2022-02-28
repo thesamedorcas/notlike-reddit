@@ -6,14 +6,14 @@ from django.contrib.auth.models import User
 
 
 class userProfile(models.Model):
-    user = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    user = models.OneToOneField(
+        to=User, on_delete=models.CASCADE, primary_key=True)
     bio = models.TextField(null=true)
     created = models.DateTimeField(auto_now_add=true)
-
-    # avatar =
+    avatar = models.ImageField(upload_to='avatars', default='avatar.svg')
 
     def __str__(self):
-        return str(self.user)
+        return str(self.user.username)
 
 
 class Tag(models.Model):
@@ -45,7 +45,8 @@ class Goal(models.Model):
 
 
 class Conversation(models.Model):
-    # user
+    user = models.ForeignKey(
+        to=User, on_delete=models.SET_NULL, null=True)
     goal = models.ForeignKey(to=Goal, on_delete=models.CASCADE)
     body = models.TextField(max_length=200)
     updated = models.DateTimeField(auto_now=true)

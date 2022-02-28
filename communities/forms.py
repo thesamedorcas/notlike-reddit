@@ -9,7 +9,6 @@ class newUserCreationForm(UserCreationForm):
     class Meta:
         model = User
         fields = ['email', 'username', 'password1', 'password2']
-        # TODO exclude is there is role
 
 
 class userProfileForm(ModelForm):

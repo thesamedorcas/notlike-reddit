@@ -194,3 +194,20 @@ def tags(request):
 def recent(request):
     conversations = Conversation.objects.all()[0:20]
     return render(request, 'communities/recent.html', {'conversations':  conversations})
+
+
+@login_required(login_url='/auth')
+def deleteCon(request, id):
+    try:
+        print("works")
+        goal = Conversation.objects.get(id=id)
+        if goal.user == request.user:
+            if request.method == 'POST':
+                goal.delete()
+                return redirect('home')
+            return render(request, 'communities/delete.html', {'obj': goal})
+        else:
+            raise Exception('no permisson')
+    except:
+        messages.error(request, "You cannot delete this")
+        return redirect('home')

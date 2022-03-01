@@ -18,8 +18,7 @@ urlpatterns = [
     path('goal/<str:id>/', views.getGoal,  name="goal"),
     path('create-goal', views.createGoal, name="create-goal"),
     path('update-goal/<str:id>/', views.updateGoal, name="update-goal"),
-    path('delete-goal/<str:id>/', views.deleteGoal, name="delete-goal")
+    path('delete-goal/<str:id>/', views.deleteGoal, name="delete-goal"),
 
-
-
+    path('delete-conversation/<str:id>/', views.deleteCon, name="delete-conversation"),
 ]

@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.db.models import Q
 from .models import Tag, Conversation, Goal, userProfile
 from django.contrib.auth import authenticate, login, logout
-from .forms import newUserCreationForm, userProfileForm
+from .forms import newUserCreationForm, userProfileForm, goalForm
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 # TODO move users to seperate app
@@ -93,10 +93,9 @@ def userUpdate(request):
 
 
 def home(request):
-    # TODO give user change to query
-    query = ''
-    # TODO arrange tag by goals under it
-    #      limitt return in each query
+    query = request.GET.get('query') if request.GET.get(
+        'query') != None else ''
+    # TODO limitt return in each query
     tags = Tag.objects.all()[0:9]
 
     goals = Goal.objects.filter(
@@ -116,22 +115,72 @@ def home(request):
 # TODO move goal to seperate app / rename tro communities
 def getGoal(request, id):
     msg = "getting goal with id " + id
-    return HttpResponse(msg)
+    goal = Goal.objects.get(id=id)
+    conversations = goal.conversation_set.all()
+    members = goal.members.all()
+    context = {'goal': goal,
+               'conversations': conversations, 'members': members}
+    return render(request, 'communities/goal.html', context)
 
 
 @login_required(login_url='/auth')
 def createGoal(request):
-    pass
+    form = goalForm()
+    tags = Tag.objects.all()
+    try:
+        if request.method == "POST":
+            usertag = request.POST.get('tag')
+            tag, created = Tag.objects.get_or_create(name=usertag)
+            Goal.objects.create(
+                created_by=request.user,
+                name=request.POST.get('name'),
+                tag=tag,
+                description=request.POST.get('description')
+            )
+            return redirect('home')
+    except:
+        messages.error(request, "goal not created")
+    context = {'form': form, 'tags': tags}
+    return render(request, 'communities/goal_form.html', context)
 
 
 @login_required(login_url='/auth')
-def updateGoal(request):
-    pass
+def updateGoal(request, id):
+    tags = Tag.objects.all()
+    context = {"tags": tags}
+    try:
+        goal = Goal.objects.get(id=id)
+        if goal.created_by == request.user:
+            if request.method == 'POST':
+                usertag = request.POST.get('tag')
+                tag, created = Tag.objects.get_or_create(name=usertag)
+                goal.objects.update(tag=tag, name=request.POST.get(
+                    'name'), description=request.POST.get("description"))
+                return redirect('home')
+            context['data'] = {'name': goal.name,
+                               'description': goal.description, 'current_tag': goal.tag}
+            return render(request, 'communities/goal_form.html', context)
+        else:
+            raise Exception('no permisson')
+    except:
+        messages.error(request, "You cannot make changes to this")
+        return redirect('home')
 
 
 @login_required(login_url='/auth')
-def deleteGoal(request):
-    pass
+def deleteGoal(request, id):
+    try:
+        goal = Goal.objects.get(id=id)
+        if goal.created_by == request.user:
+            if request.method == 'POST':
+                goal.delete()
+                return redirect('home')
+            return render(request, 'communities/delete.html', {'obj': goal})
+        else:
+            raise Exception('no permisson')
+    except:
+        messages.error(request, "You cannot delete this")
+        return redirect('home')
 
 
 def tags(request):
